@@ -1,6 +1,11 @@
 fastapi
 uvicorn
-google-genai
-python-dotenv
-pymongo
 pydantic
+pydantic-settings
+motor
+google-genai
+tenacity
+pytest
+httpx
+mypy
+ruff
