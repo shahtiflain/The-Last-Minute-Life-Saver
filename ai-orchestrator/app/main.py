@@ -2,12 +2,14 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from app.api.routes import router as orchestration_router
 from app.utils.logger import get_logger
+from app.agents.agent_registry import register_default_agents
 
 logger = get_logger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Starting up AI Orchestrator service...")
+    register_default_agents()
     yield
     logger.info("Shutting down AI Orchestrator service...")
 

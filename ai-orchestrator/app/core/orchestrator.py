@@ -24,33 +24,33 @@ class Orchestrator:
             context.load_state(request.context)
 
         # 2. Find appropriate agent(s)
-        agent = AgentRegistry.get_agent_for_intent(request.intent)
+        agents = AgentRegistry.get_all_agents_for_intent(request.intent)
         
         agent_responses: List[AgentResponse] = []
         overall_status = "SUCCESS"
         overall_reasoning = "Orchestration completed successfully."
 
-        if not agent:
-            # For Milestone 4, we don't have agents yet, so we return a placeholder
-            logger.info("No matching agent found (Milestone 4 placeholder).", extra={"trace_id": trace_id})
+        if not agents:
+            logger.info("No matching agent found.", extra={"trace_id": trace_id})
             overall_reasoning = f"No agent registered for intent: {request.intent}"
             
         else:
-            # 3. Execute Agent
-            try:
-                logger.info(f"Executing agent: {agent.name}", extra={"trace_id": trace_id})
-                response = await agent.execute(context, request.intent)
-                agent_responses.append(response)
-                
-                # 4. Stage updates in context
-                for update in response.memory_updates:
-                    context.stage_update(update)
+            # 3. Execute Agents Sequentially
+            for agent in agents:
+                try:
+                    logger.info(f"Executing agent: {agent.name}", extra={"trace_id": trace_id})
+                    response = await agent.execute(context, request.intent)
+                    agent_responses.append(response)
                     
-            except Exception as e:
-                logger.error(f"Agent execution failed: {str(e)}", extra={"trace_id": trace_id}, exc_info=True)
-                overall_status = "FAILED"
-                overall_reasoning = f"Agent {agent.name} failed during execution."
-                raise AgentExecutionError(overall_reasoning) from e
+                    # 4. Stage updates in context so the NEXT agent sees them
+                    for update in response.memory_updates:
+                        context.stage_update(update)
+                        
+                except Exception as e:
+                    logger.error(f"Agent execution failed: {str(e)}", extra={"trace_id": trace_id}, exc_info=True)
+                    overall_status = "FAILED"
+                    overall_reasoning = f"Agent {agent.name} failed during execution."
+                    raise AgentExecutionError(overall_reasoning) from e
 
         # 5. Flush Context to MongoDB
         await self.shared_memory.flush_context(context)
