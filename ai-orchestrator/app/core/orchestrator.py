@@ -52,6 +52,30 @@ class Orchestrator:
                     overall_reasoning = f"Agent {agent.name} failed during execution."
                     raise AgentExecutionError(overall_reasoning) from e
 
+        # 4.5 Dispatch Staged Notifications
+        # The Watcher stages NotificationIntents. We send them here (Decoupled Architecture).
+        staged_notifications = [u.data for u in context.get_pending_updates() if u.collection == "notification_intents"]
+        if staged_notifications:
+            from app.tools.notification_tool import NotificationTool
+            notifier = NotificationTool()
+            user_fcm_token = request.context.get("fcm_token") # Assumes frontend provides this in context
+            
+            for notif in staged_notifications:
+                if user_fcm_token:
+                    notifier.send_notification(
+                        fcm_token=user_fcm_token,
+                        title=notif.get("title", "AI Guardian"),
+                        body=notif.get("body", ""),
+                        data_payload={
+                            "priority": notif.get("priority", "LOW"),
+                            "type": notif.get("type", "PROGRESS"),
+                            "whyAmISeeingThis": notif.get("whyAmISeeingThis", ""),
+                            "suggestedAction": notif.get("suggestedAction", "")
+                        }
+                    )
+                else:
+                    logger.warning("FCM Token not provided in request context; skipping push notification dispatch.")
+
         # 5. Flush Context to MongoDB
         await self.shared_memory.flush_context(context)
         

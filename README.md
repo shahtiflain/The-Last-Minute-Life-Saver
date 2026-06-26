@@ -1,54 +1,82 @@
-# Antigravity Project
+# Last-Minute Life Saver ⏱️
 
-## Project Overview
-This is a monorepo-style project designed to provide a robust foundation for an AI-powered application. It integrates a modern frontend, a scalable backend, and a dedicated AI orchestration layer.
+**The Ultimate AI-Powered Rescue System for Overwhelmed Professionals and Students.**
 
-## Problem Statement
-The project aims to solve complex business problems by integrating generative AI capabilities into a seamless, full-stack web application. The separation of concerns between standard business logic and AI orchestration allows for scalability and maintainability.
+Last-Minute Life Saver is a multi-agent AI scheduling ecosystem that takes your scattered, overwhelming pile of to-dos and instantly transforms them into a mathematically optimized, realistic, and stress-free calendar.
 
-## Tech Stack
-- **Frontend**: React, Vite, TypeScript
-- **Backend**: Node.js, Express, TypeScript
-- **AI Orchestrator**: Python, FastAPI, Google GenAI
-- **Shared Library**: TypeScript for shared schemas and types
+## The Problem
+When deadlines loom, cognitive overload sets in. Traditional task managers require *you* to figure out how long things take, when to do them, and how to recover when you inevitably miss a deadline. 
 
-## Folder Structure
-```text
-.
-├── ai-orchestrator/   # Python/FastAPI service for AI models and complex logic
-├── backend/           # Node.js/Express API for business logic and data access
-├── frontend/          # React/Vite web application
-├── shared/            # Shared TypeScript types, schemas, and utilities
-└── docs/              # Project documentation (e.g., SRS)
+## The Solution
+An autonomous multi-agent system that:
+1. **Plans**: Breaks massive goals into Pomodoro-sized bites.
+2. **Analyzes**: Detects impossible deadlines and calculates risk scores.
+3. **Schedules**: Tetris-fits tasks perfectly into your Google Calendar.
+4. **Guards**: An emotionally intelligent background watcher that nudges you and instantly reschedules if a calendar conflict arises.
+
+---
+
+## System Architecture
+
+```mermaid
+flowchart TD
+    A[React / Vite Frontend] -->|REST API / JWT| B[Node.js / Express Backend]
+    B -->|Internal API Key| C[FastAPI AI Orchestrator]
+    
+    subgraph Multi-Agent AI Pipeline
+        C --> D[Planner Agent]
+        D --> E[Risk Analyzer Agent]
+        E --> F[Scheduler Agent]
+        C --> G[Watcher / AI Guardian]
+    end
+    
+    C <-->|Read / Write| H[(MongoDB Atlas)]
+    F -.->|Insert Blocks| I[Google Calendar API]
+    G -.->|Staged Intents| C
+    C -.->|Push Delivery| J[Firebase Cloud Messaging]
 ```
 
-## Setup Instructions
-1. Install dependencies for the TypeScript workspaces:
-   - `cd backend && npm install`
-   - `cd frontend && npm install`
-   - `cd shared && npm install`
-2. Install Python dependencies for the AI orchestrator:
-   - `cd ai-orchestrator`
-   - `pip install -r requirements.txt`
+## Explainable AI (XAI)
+We believe AI shouldn't be a black box. Every single AI decision in this application includes a `whyAmISeeingThis` human-readable explanation, a `confidence` score, and explicit `reasoning` traces visible in the UI.
 
-## Environment Variables Required
-You will need to configure environment variables. Check the `.env.example` files in each directory:
-- `backend/.env.example`
-- `frontend/.env.example`
-- `ai-orchestrator/.env.example`
+## Tech Stack
+* **Frontend**: React, Vite, TypeScript
+* **Backend API**: Node.js, Express
+* **AI Orchestrator**: Python, FastAPI, Gemini API
+* **Database**: MongoDB Atlas
+* **Integrations**: Google Calendar API, Firebase Cloud Messaging
 
-## Development Workflow
-To run the services locally in development mode:
-- **Frontend**: `cd frontend && npm run dev`
-- **Backend**: `cd backend && npm run dev`
-- **AI Orchestrator**: `cd ai-orchestrator && python -m uvicorn main:app --reload`
+## Quickstart
 
-## Architecture Summary
-The system consists of a React frontend communicating with a Node.js backend. The Node.js backend acts as the main gateway and handles standard business logic, database interaction, and authentication. For AI-specific tasks, the backend communicates with the Python-based AI Orchestrator service.
+### 1. Database & AI
+Ensure you have a MongoDB instance running and a Google Gemini API Key. Populate your `.env` files using the `.env.example` templates.
 
-## Current Milestone Status
-**Milestone 1: Project Foundation - Completed**
-- Initialized all project directories (`frontend`, `backend`, `ai-orchestrator`, `shared`).
-- Configured foundational tooling (TypeScript, ESLint, Vite, Python requirements).
-- Set up root-level configurations (`.gitignore`, `README.md`).
-- Established basic server health-check endpoints.
+### 2. AI Orchestrator (Backend)
+```bash
+cd ai-orchestrator
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### 3. Node Backend
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### 4. React Frontend
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+## Demo Seed Data
+To populate the database with hackathon-ready demo personas (Student, Founder, Engineer), run:
+```bash
+cd ai-orchestrator
+python scripts/seed_demo_data.py
+```

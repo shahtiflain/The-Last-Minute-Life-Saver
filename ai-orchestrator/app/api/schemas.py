@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List
 
 class MemoryUpdate(BaseModel):
     collection: str = Field(..., description="The MongoDB collection to update (e.g., tasks, goals)")
@@ -20,7 +20,12 @@ class AgentResponse(BaseModel):
 class OrchestratorRequest(BaseModel):
     user_id: str
     intent: str
-    context: Optional[Dict[str, Any]] = None
+    context: Dict[str, Any] = Field(default_factory=dict, description="Initial context like user's existing tasks")
+
+class ScheduleApproveRequest(BaseModel):
+    user_id: str
+    oauth_tokens: Dict[str, Any]
+    blocks: List[Dict[str, Any]] = Field(..., description="The scheduled blocks to sync to Google Calendar")
 
 class OrchestratorResponse(BaseModel):
     trace_id: str

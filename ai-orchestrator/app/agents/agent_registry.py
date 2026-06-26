@@ -43,10 +43,14 @@ def register_default_agents():
     from app.llm.gemini_client import GeminiClient
     from app.agents.planner_agent import PlannerAgent
     from app.agents.risk_analyzer_agent import RiskAnalyzerAgent
+    from app.agents.scheduler_agent import SchedulerAgent
+    from app.agents.watcher_agent import WatcherAgent
     
     # In a real app, trace_id and DI would be handled better.
     # For now, we inject a generic client. Agents can clone/override it if needed.
     llm = GeminiClient()
     AgentRegistry.register(PlannerAgent(llm))
     AgentRegistry.register(RiskAnalyzerAgent(llm))
+    AgentRegistry.register(SchedulerAgent(llm))
+    AgentRegistry.register(WatcherAgent(llm))
 
