@@ -21,7 +21,18 @@ export function Login() {
     setError('');
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      // Request Google Calendar access
+      provider.addScope('https://www.googleapis.com/auth/calendar.events');
+      
+      const result = await signInWithPopup(auth, provider);
+
+      console.log("LOGIN SUCCESS");
+      console.log(result.user);
+
+      const token = await result.user.getIdToken();
+
+      console.log("TOKEN:", token);
+
       navigate('/dashboard');
     } catch (err: any) {
       console.error(err);
@@ -40,9 +51,9 @@ export function Login() {
         <CardContent>
           <p className="text-center text-text-secondary mb-6">Sign in to The Last-Minute Life Saver</p>
           {error && <div className="mb-4 text-danger text-sm text-center">{error}</div>}
-          <Button 
-            className="w-full" 
-            onClick={handleGoogleSignIn} 
+          <Button
+            className="w-full"
+            onClick={handleGoogleSignIn}
             isLoading={isLoading}
           >
             Sign in with Google

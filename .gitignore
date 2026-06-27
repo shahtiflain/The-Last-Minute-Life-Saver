@@ -28,3 +28,9 @@ credentials.json
 
 # Logs
 *.log
+
+.env.*
+!.env.example
+
+#Firebase Admin SDK
+serviceAccountKey.json
