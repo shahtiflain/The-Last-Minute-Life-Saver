@@ -62,3 +62,12 @@ export const getCalendarStatus = asyncHandler(async (req: Request, res: Response
   const isConnected = !!user?.connectedAccounts?.googleCalendar;
   res.json({ isConnected });
 });
+
+export const disconnectGoogleCalendar = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user!.userId;
+  await User.findOneAndUpdate(
+    { userId },
+    { $unset: { 'connectedAccounts.googleCalendar': '' } }
+  );
+  res.json({ status: 'success', message: 'Google Calendar disconnected' });
+});

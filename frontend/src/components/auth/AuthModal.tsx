@@ -39,6 +39,7 @@ export function AuthModal({
         access_type: 'offline'
       });
       
+      if (!auth) throw new Error('Firebase Auth not initialized');
       const result = await signInWithPopup(auth, provider);
 
       const credential = GoogleAuthProvider.credentialFromResult(result);

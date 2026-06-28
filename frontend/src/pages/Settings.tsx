@@ -47,7 +47,24 @@ function GoogleCalendarConnected() {
         <p className="text-sm text-text-secondary">Sync your tasks and focus blocks.</p>
       </div>
       {isCalendarConnected ? (
-        <span className="text-sm text-success font-medium px-4 py-2 bg-success/10 rounded-lg border border-success/20 shadow-sm">Connected</span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-success font-medium px-4 py-2 bg-success/10 rounded-lg border border-success/20 shadow-sm">Connected</span>
+          <Button 
+            onClick={async () => {
+              try {
+                await api.delete('/api/auth/google/disconnect');
+                setIsCalendarConnected(false);
+                toast.success('Calendar disconnected');
+              } catch {
+                toast.error('Failed to disconnect');
+              }
+            }} 
+            variant="ghost" 
+            size="sm"
+          >
+            Disconnect
+          </Button>
+        </div>
       ) : (
         <Button onClick={() => login()} isLoading={isConnecting} variant="outline" className="shadow-sm">
           Connect Calendar

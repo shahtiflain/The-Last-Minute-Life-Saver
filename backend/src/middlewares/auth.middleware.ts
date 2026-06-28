@@ -47,10 +47,10 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
         
         const payloadJson = Buffer.from(base64, 'base64').toString('utf8');
         const payload = JSON.parse(payloadJson);
-        if (!payload.user_id) throw err;
+        if (!payload.user_id && !payload.sub) throw err;
         
         decodedToken = {
-          uid: payload.user_id,
+          uid: payload.user_id || payload.sub,
           email: payload.email
         };
       } catch (manualErr: any) {
@@ -65,10 +65,10 @@ export const requireAuth = async (req: Request, res: Response, next: NextFunctio
     if (decodedToken.email) {
       req.user.email = decodedToken.email;
     }
-
+    console.log("Auth successful for user:", req.user.userId);
     next();
   } catch (error: any) {
-    console.error("AUTH MIDDLEWARE ERROR:", error);
+    console.error("AUTH MIDDLEWARE ERROR:", error.message || error);
     res.status(401).json({ status: 'error', message: 'Unauthorized: ' + (error.message || 'Invalid or expired token') });
   }
 };

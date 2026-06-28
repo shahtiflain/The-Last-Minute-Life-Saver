@@ -10,6 +10,7 @@ export interface Task {
   category?: string;
   deadline: string;
   progress: number;
+  estimatedDurationMinutes?: number;
 }
 
 export function useTasks() {

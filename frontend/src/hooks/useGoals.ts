@@ -9,6 +9,7 @@ export interface Goal {
   progress: number;
   deadline: string;
   linkedTasks: string[];
+  status?: string;
 }
 
 export function useGoals() {

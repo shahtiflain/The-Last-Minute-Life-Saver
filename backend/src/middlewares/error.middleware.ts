@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import { logger } from '../utils/logger.js';
 
 export const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,7 +9,7 @@ export const errorHandler = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _next: NextFunction
 ): void => {
-  console.error('Error:', err);
+  logger.error('Error in request', { url: req.url, error: err.stack || err.message || err });
 
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal Server Error';

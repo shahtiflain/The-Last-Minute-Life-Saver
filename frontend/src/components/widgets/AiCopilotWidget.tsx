@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { Sparkles, X, Send, Bot, User } from 'lucide-react';
 import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
 import api from '../../services/api';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -11,6 +10,7 @@ interface Message {
   id: string;
   role: 'user' | 'ai';
   content: string;
+  blocksToApprove?: any[];
 }
 
 export function AiCopilotWidget() {
@@ -29,6 +29,20 @@ export function AiCopilotWidget() {
     }
   }, [messages, isOpen]);
 
+  const handleApproveSchedule = async (blocks: any[], messageId: string) => {
+    try {
+      setIsLoading(true);
+      await api.post('/api/ai/schedule/approve', { blocks });
+      toast.success('Schedule approved and synced to Google Calendar!');
+      setMessages(prev => prev.map(msg => msg.id === messageId ? { ...msg, blocksToApprove: undefined } : msg));
+      queryClient.invalidateQueries({ queryKey: ['focusBlocks'] });
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Failed to approve schedule.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSend = async (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!inputValue.trim() || isLoading) return;
@@ -39,25 +53,36 @@ export function AiCopilotWidget() {
     setIsLoading(true);
 
     try {
-      const oauthToken = localStorage.getItem('google_oauth_token');
-      const calendarTokens = oauthToken ? { token: oauthToken } : undefined;
-
       const response = await api.post('/api/ai/orchestrate', {
         intent: userMessage.content,
-        calendarTokens
       });
 
-      const { agent_responses } = response.data;
+      const { overall_reasoning, agent_responses } = response.data;
       
-      let aiContent = "I've processed your request!";
+      let aiContent = overall_reasoning || "I've processed your request!";
+      let blocksToApprove: any[] = [];
+      
       if (agent_responses && agent_responses.length > 0) {
-        aiContent = agent_responses.join('\n\n');
+        agent_responses.forEach((agentRes: any) => {
+          if (agentRes.reasoning) {
+            aiContent += `\n\n[${agentRes.agent}]: ${agentRes.reasoning}`;
+          }
+          if (agentRes.agent === 'Scheduler' && agentRes.result?.recommendedSchedule?.blocks) {
+             blocksToApprove = agentRes.result.recommendedSchedule.blocks;
+          }
+        });
         queryClient.invalidateQueries({ queryKey: ['tasks'] });
         queryClient.invalidateQueries({ queryKey: ['goals'] });
         queryClient.invalidateQueries({ queryKey: ['analytics'] });
+        queryClient.invalidateQueries({ queryKey: ['focusBlocks'] });
       }
 
-      setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', content: aiContent }]);
+      setMessages(prev => [...prev, { 
+        id: Date.now().toString(), 
+        role: 'ai', 
+        content: aiContent,
+        blocksToApprove: blocksToApprove.length > 0 ? blocksToApprove : undefined
+      } as any]);
     } catch (err) {
       setMessages(prev => [...prev, { id: Date.now().toString(), role: 'ai', content: 'Sorry, I encountered an error processing your request.' }]);
       toast.error('AI Orchestration failed.');
@@ -136,6 +161,19 @@ export function AiCopilotWidget() {
                         {i !== msg.content.split('\n').length - 1 && <br />}
                       </span>
                     ))}
+                    {msg.blocksToApprove && (
+                      <div className="mt-4 pt-3 border-t border-border-color/60">
+                        <p className="text-xs text-text-tertiary mb-2">Schedule ready for approval</p>
+                        <Button 
+                          onClick={() => handleApproveSchedule(msg.blocksToApprove!, msg.id)}
+                          disabled={isLoading}
+                          size="sm"
+                          className="w-full"
+                        >
+                          Approve Schedule
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               ))}
