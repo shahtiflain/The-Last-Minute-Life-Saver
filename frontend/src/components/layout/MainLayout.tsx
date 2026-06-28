@@ -6,6 +6,7 @@ import { CommandPalette } from '../ui/CommandPalette';
 import { motion } from 'framer-motion';
 import { AuthModal } from '../auth/AuthModal';
 import { useAuth } from '../../features/auth/AuthProvider';
+import { AiCopilotWidget } from '../widgets/AiCopilotWidget';
 
 export function MainLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -53,6 +54,7 @@ export function MainLayout() {
 
       <CommandPalette />
       <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
+      <AiCopilotWidget />
     </div>
   );
 }

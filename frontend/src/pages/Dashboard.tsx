@@ -29,13 +29,18 @@ export function Dashboard() {
   const dateStr = format(new Date(), 'EEEE, MMMM do');
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="show"
-      exit="hidden"
-      variants={container}
-      className="max-w-[1600px] mx-auto space-y-6"
-    >
+    <div className="relative min-h-full w-full">
+      {/* Premium Ambient Background */}
+      <div className="absolute -top-20 -right-20 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] pointer-events-none mix-blend-screen" />
+      <div className="absolute top-[40%] -left-20 w-[500px] h-[500px] bg-secondary/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen" />
+      
+      <motion.div
+        initial="hidden"
+        animate="show"
+        exit="hidden"
+        variants={container}
+        className="relative max-w-[1600px] mx-auto space-y-6 z-10"
+      >
       {/* Header */}
       <motion.div variants={item} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
         <div>
@@ -95,5 +100,6 @@ export function Dashboard() {
         </motion.div>
       </div>
     </motion.div>
+    </div>
   );
 }

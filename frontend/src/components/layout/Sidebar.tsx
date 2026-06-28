@@ -2,17 +2,22 @@ import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, CheckSquare, Target, Activity, Calendar,
-  Settings, Sparkles, Search, ChevronLeft, ChevronRight, User
+  Settings, Sparkles, Search, ChevronLeft, ChevronRight, User, Timer, LineChart, Trophy
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
+import logo from '../../assets/logo.png';
+import customLogo from '../../assets/hustler_word_logo_transparent.png';
 
 const navItems = [
   { name: 'Dashboard', to: '/dashboard', icon: LayoutDashboard },
+  { name: 'Analytics', to: '/analytics', icon: LineChart },
+  { name: 'Focus', to: '/focus', icon: Timer },
   { name: 'Tasks', to: '/tasks', icon: CheckSquare },
   { name: 'Calendar', to: '/calendar', icon: Calendar },
   { name: 'Goals', to: '/goals', icon: Target },
   { name: 'Habits', to: '/habits', icon: Activity },
+  { name: 'Achievements', to: '/achievements', icon: Trophy },
   { name: 'AI Coach', to: '/ai-coach', icon: Sparkles },
 ];
 
@@ -93,22 +98,21 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
       {/* Logo */}
       <div className="flex items-center h-16 px-4 border-b border-border-color/50 flex-shrink-0">
         <div className="flex items-center gap-2.5 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#383838] to-[#1E1E1E] dark:from-[#3a3a3a] dark:to-[#222222] flex items-center justify-center shadow-sm border border-[#444] flex-shrink-0">
-            <span className="text-white font-bold text-lg font-serif leading-none">H</span>
-          </div>
-          <AnimatePresence>
-            {!collapsed && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: 'auto' }}
-                exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.2 }}
-                className="text-[17px] font-semibold tracking-tight text-text-primary overflow-hidden whitespace-nowrap pl-1"
-              >
-                Hustlr
-              </motion.span>
-            )}
-          </AnimatePresence>
+          {!collapsed ? (
+            <motion.img
+              initial={{ opacity: 0, width: 0 }}
+              animate={{ opacity: 1, width: 140 }}
+              exit={{ opacity: 0, width: 0 }}
+              transition={{ duration: 0.2 }}
+              src={customLogo}
+              alt="Hustlr Wordmark"
+              className="object-contain drop-shadow-md py-1"
+            />
+          ) : (
+            <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center">
+              <img src={logo} alt="Hustlr Logo" className="w-[120%] h-[120%] max-w-[120%] object-contain mix-blend-screen" />
+            </div>
+          )}
         </div>
       </div>
 

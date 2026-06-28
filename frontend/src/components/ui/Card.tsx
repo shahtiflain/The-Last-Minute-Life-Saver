@@ -6,7 +6,7 @@ export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {}
 export const Card = forwardRef<HTMLDivElement, CardProps>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn('relative rounded-[20px] border border-border-color bg-bg-surface text-text-primary shadow-premium transition-all duration-300 hover:shadow-glow hover:-translate-y-[1px] overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/5 before:to-transparent before:pointer-events-none', className)}
+    className={cn('relative rounded-[24px] border border-border-color/60 bg-bg-surface/40 backdrop-blur-xl text-text-primary shadow-2xl transition-all duration-500 hover:shadow-[0_0_30px_rgba(129,140,248,0.15)] hover:border-border-color hover:-translate-y-1 overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-br before:from-white/10 before:to-transparent before:opacity-50 before:pointer-events-none', className)}
     {...props}
   />
 ));

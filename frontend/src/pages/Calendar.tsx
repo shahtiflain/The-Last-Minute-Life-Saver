@@ -40,7 +40,8 @@ export function Calendar() {
     try {
       const res: any = await api.get('/api/focus-blocks');
       // Sort blocks by start time
-      const sortedBlocks = res.data.sort((a: FocusBlock, b: FocusBlock) => 
+      const blocksArray = Array.isArray(res.data) ? res.data : (res.data.data || []);
+      const sortedBlocks = blocksArray.sort((a: FocusBlock, b: FocusBlock) => 
         new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
       );
       setBlocks(sortedBlocks);

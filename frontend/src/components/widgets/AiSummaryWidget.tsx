@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Sparkles, TrendingUp } from 'lucide-react';
 import { useAnalytics } from '../../hooks/useAnalytics';
 import { useAuth } from '../../features/auth/AuthProvider';
+import { useTasks } from '../../hooks/useTasks';
 import { cn } from '../../utils/cn';
 import { Card, CardContent } from '../ui/Card';
 
@@ -42,8 +43,9 @@ export function AiSummaryWidget() {
   const hour = new Date().getHours();
   const greeting = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
   const name = currentUser?.displayName?.split(' ')[0] ?? 'there';
+  const { data: tasks } = useTasks();
 
-  const taskCount = 0; // would pull from tasks
+  const taskCount = tasks?.filter(t => t.status !== 'COMPLETED').length ?? 0;
   const habitCount = analytics?.habitCompletion?.totalDueToday ?? 0;
   
   const template = BRIEFINGS[new Date().getDay() % BRIEFINGS.length];

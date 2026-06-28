@@ -13,6 +13,9 @@ const Goals = lazy(() => import('./pages/Goals').then(module => ({ default: modu
 const Habits = lazy(() => import('./pages/Habits').then(module => ({ default: module.Habits })));
 const Calendar = lazy(() => import('./pages/Calendar').then(module => ({ default: module.Calendar })));
 const AiCoach = lazy(() => import('./pages/AiCoach').then(module => ({ default: module.AiCoach })));
+const FocusMode = lazy(() => import('./pages/FocusMode').then(module => ({ default: module.FocusMode })));
+const Analytics = lazy(() => import('./pages/Analytics').then(module => ({ default: module.Analytics })));
+const Achievements = lazy(() => import('./pages/Achievements').then(module => ({ default: module.Achievements })));
 const Settings = lazy(() => import('./pages/Settings').then(module => ({ default: module.Settings })));
 const Profile = lazy(() => import('./pages/Profile').then(module => ({ default: module.Profile })));
 
@@ -65,7 +68,7 @@ const App = () => {
         <Router>
           <AnimatePresence mode="wait">
             <Routes>
-              {/* Landing Page */}
+              {/* Standalone Landing Page */}
               <Route path="/" element={
                 <Suspense fallback={<PageSkeleton />}>
                   <Landing />
@@ -108,6 +111,21 @@ const App = () => {
                 <Route path="/ai-coach" element={
                   <Suspense fallback={<PageSkeleton />}>
                     <AiCoach />
+                  </Suspense>
+                } />
+                <Route path="/focus" element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <FocusMode />
+                  </Suspense>
+                } />
+                <Route path="/analytics" element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <Analytics />
+                  </Suspense>
+                } />
+                <Route path="/achievements" element={
+                  <Suspense fallback={<PageSkeleton />}>
+                    <Achievements />
                   </Suspense>
                 } />
                 <Route path="/settings" element={

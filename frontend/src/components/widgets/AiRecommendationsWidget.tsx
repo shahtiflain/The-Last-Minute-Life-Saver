@@ -3,44 +3,85 @@ import { useState } from 'react';
 import { cn } from '../../utils/cn';
 import { Card, CardContent } from '../ui/Card';
 
+import { useTasks } from '../../hooks/useTasks';
+import { useGoals } from '../../hooks/useGoals';
+import { useAnalytics } from '../../hooks/useAnalytics';
+
 interface Recommendation {
   id: string;
   title: string;
   reasoning: string;
-  confidence: number; // 0-100
+  confidence: number;
   category: 'focus' | 'goal' | 'habit' | 'schedule';
   action?: string;
   steps?: string[];
 }
 
-const RECOMMENDATIONS: Recommendation[] = [
-  {
-    id: '1',
-    title: 'Start your hardest task first',
-    reasoning: 'Your productivity score peaks between 9-11am. Tackling cognitively demanding work during this window can yield 40% better output.',
-    confidence: 88,
-    category: 'focus',
-    action: 'Open Tasks',
-    steps: ['Identify your #1 priority task', 'Block distractions for 90 minutes', 'Start with a 5-minute planning session'],
-  },
-  {
-    id: '2',
-    title: 'You\'re 2 habits away from a streak record',
-    reasoning: 'Based on your habit history, completing your evening habits today would set a new 7-day streak — your highest this month.',
-    confidence: 94,
-    category: 'habit',
-    action: 'View Habits',
-  },
-  {
-    id: '3',
-    title: 'Schedule a review session for Goal "Launch MVP"',
-    reasoning: 'This goal\'s deadline is in 3 weeks but progress is at 45%. A dedicated 2-hour review block would significantly reduce risk.',
-    confidence: 76,
-    category: 'goal',
-    action: 'Open Calendar',
-    steps: ['Book 2h block this week', 'Review task breakdown', 'Identify blockers'],
-  },
-];
+function useDynamicRecommendations(): Recommendation[] {
+  const { data: tasks } = useTasks();
+  const { data: goals } = useGoals();
+  const { data: analytics } = useAnalytics();
+
+  const recs: Recommendation[] = [];
+
+  // Insight 1: Based on tasks
+  const highPriorityTasks = tasks?.filter(t => t.priority === 'CRITICAL' && t.status !== 'COMPLETED') ?? [];
+  if (highPriorityTasks.length > 0) {
+    recs.push({
+      id: 'rec-task',
+      title: `Start with "${highPriorityTasks[0].title}"`,
+      reasoning: `You have ${highPriorityTasks.length} critical priority tasks. Tackling the hardest work first yields 40% better output.`,
+      confidence: 88,
+      category: 'focus',
+      action: 'Open Tasks',
+      steps: ['Block distractions for 90 minutes', 'Start with a 5-minute planning session'],
+    });
+  } else {
+    recs.push({
+      id: 'rec-task-good',
+      title: 'Inbox zero for critical tasks!',
+      reasoning: 'You have no critical tasks pending. This is a great time to focus on learning or reviewing long-term goals.',
+      confidence: 72,
+      category: 'focus',
+      action: 'Plan Ahead',
+    });
+  }
+
+  // Insight 2: Based on analytics
+  const score = analytics?.productivityScore?.score ?? 0;
+  if (score < 50) {
+    recs.push({
+      id: 'rec-score',
+      title: 'Productivity dip detected',
+      reasoning: 'Your score has dropped. Consider taking a 15-minute break and resetting your environment.',
+      confidence: 85,
+      category: 'habit',
+    });
+  } else {
+    recs.push({
+      id: 'rec-habit',
+      title: 'Keep up the momentum',
+      reasoning: 'Your productivity score is strong. A focused 90-minute session now can clear your backlog.',
+      confidence: 94,
+      category: 'habit',
+    });
+  }
+
+  // Insight 3: Based on goals
+  const activeGoals = goals?.filter(g => g.status === 'ACTIVE' && g.progress < 50) ?? [];
+  if (activeGoals.length > 0) {
+    recs.push({
+      id: 'rec-goal',
+      title: `Schedule a review for "${activeGoals[0].title}"`,
+      reasoning: `This goal is under 50% complete. A dedicated 2-hour review block would significantly reduce risk.`,
+      confidence: 76,
+      category: 'goal',
+      steps: ['Book 2h block this week', 'Review task breakdown', 'Identify blockers'],
+    });
+  }
+
+  return recs;
+}
 
 const categoryConfig = {
   focus: { icon: Zap, color: 'text-warning', bg: 'bg-warning/10', label: 'Focus' },
@@ -115,13 +156,15 @@ function RecommendationCard({ rec }: { rec: Recommendation }) {
 }
 
 export function AiRecommendationsWidget() {
+  const recommendations = useDynamicRecommendations();
+
   return (
     <Card className="h-full">
       <CardContent className="h-full flex flex-col p-6">
         <div className="flex items-center justify-between mb-5">
           <div>
             <div className="text-xs font-semibold text-text-tertiary uppercase tracking-wider mb-1">AI Recommendations</div>
-            <div className="text-lg font-bold text-text-primary tracking-tight">{RECOMMENDATIONS.length} insights</div>
+            <div className="text-lg font-bold text-text-primary tracking-tight">{recommendations.length} insights</div>
           </div>
           <div className="w-8 h-8 rounded-lg bg-bg-surface-hover flex items-center justify-center border border-border-color">
             <Brain className="w-4 h-4 text-primary" />
@@ -129,7 +172,7 @@ export function AiRecommendationsWidget() {
         </div>
 
         <div className="flex-1 space-y-3 overflow-y-auto premium-scrollbar pr-1 -mr-1">
-          {RECOMMENDATIONS.map(rec => (
+          {recommendations.map(rec => (
             <RecommendationCard key={rec.id} rec={rec} />
           ))}
         </div>

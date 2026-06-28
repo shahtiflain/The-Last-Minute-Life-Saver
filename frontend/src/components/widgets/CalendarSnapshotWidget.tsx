@@ -1,18 +1,27 @@
 import { Calendar, Clock } from 'lucide-react';
 import { format, isToday } from 'date-fns';
 import { Card, CardContent } from '../ui/Card';
+import { useState, useEffect } from 'react';
+import api from '../../services/api';
 
-// Static/derived focus blocks for snapshot
-const TODAY_BLOCKS = [
-  { id: '1', title: 'Deep Work — Task Planning', start: '09:00', end: '10:30', type: 'focus', color: '#818CF8' },
-  { id: '2', title: 'Team Sync', start: '11:00', end: '11:30', type: 'meeting', color: '#34D399' },
-  { id: '3', title: 'Learning Block', start: '14:00', end: '15:00', type: 'focus', color: '#F472B6' },
-  { id: '4', title: 'Email & Admin', start: '16:00', end: '17:00', type: 'admin', color: '#60A5FA' },
-];
+interface FocusBlock {
+  id: string;
+  _id: string;
+  title: string;
+  startTime: string;
+  endTime: string;
+  status: string;
+  color?: string;
+}
 
 function timeToMinutes(time: string): number {
   const [h, m] = time.split(':').map(Number);
   return h * 60 + m;
+}
+
+function formatTimeString(isoString: string): string {
+  const d = new Date(isoString);
+  return `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
 }
 
 const TIMELINE_START = 8 * 60; // 8am
@@ -20,6 +29,33 @@ const TIMELINE_END = 18 * 60; // 6pm
 const RANGE = TIMELINE_END - TIMELINE_START;
 
 export function CalendarSnapshotWidget() {
+  const [blocks, setBlocks] = useState<FocusBlock[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBlocks = async () => {
+      try {
+        const res: any = await api.get('/api/focus-blocks');
+        const blocksArray = Array.isArray(res.data) ? res.data : (res.data.data || []);
+        const todayBlocks = blocksArray.filter((b: FocusBlock) => isToday(new Date(b.startTime)));
+        
+        const formattedBlocks = todayBlocks.map((b: FocusBlock, i: number) => ({
+          ...b,
+          start: formatTimeString(b.startTime),
+          end: formatTimeString(b.endTime),
+          color: ['#818CF8', '#34D399', '#F472B6', '#60A5FA'][i % 4]
+        })).sort((a: any, b: any) => timeToMinutes(a.start) - timeToMinutes(b.start));
+        
+        setBlocks(formattedBlocks);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchBlocks();
+  }, []);
+
   const now = new Date();
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
   const currentPct = Math.max(0, Math.min(100, ((currentMinutes - TIMELINE_START) / RANGE) * 100));
@@ -53,12 +89,12 @@ export function CalendarSnapshotWidget() {
             <div className="absolute top-0 left-0 right-0 h-0.5 bg-border-color/50 rounded-full" />
 
             {/* Event blocks */}
-            {TODAY_BLOCKS.map(block => {
+            {!isLoading && blocks.map((block: any) => {
               const startPct = ((timeToMinutes(block.start) - TIMELINE_START) / RANGE) * 100;
               const widthPct = ((timeToMinutes(block.end) - timeToMinutes(block.start)) / RANGE) * 100;
               return (
                 <div
-                  key={block.id}
+                  key={block._id || block.id}
                   className="absolute top-2 h-8 rounded-md flex items-center px-2 overflow-hidden shadow-sm"
                   style={{
                     left: `${Math.max(0, startPct)}%`,
@@ -90,8 +126,8 @@ export function CalendarSnapshotWidget() {
 
           {/* Upcoming block */}
           <div className="mt-4 space-y-2">
-            {TODAY_BLOCKS.filter(b => timeToMinutes(b.start) > currentMinutes).slice(0, 2).map(block => (
-              <div key={block.id} className="flex items-center gap-3 text-xs bg-bg-surface-hover/50 p-2 rounded-lg border border-border-color/50">
+            {!isLoading && blocks.filter((b: any) => timeToMinutes(b.start) > currentMinutes).slice(0, 2).map((block: any) => (
+              <div key={block._id || block.id} className="flex items-center gap-3 text-xs bg-bg-surface-hover/50 p-2 rounded-lg border border-border-color/50">
                 <Clock className="w-3.5 h-3.5 text-text-tertiary flex-shrink-0" />
                 <span className="text-text-tertiary font-medium">{block.start}</span>
                 <div className="w-1.5 h-1.5 rounded-full flex-shrink-0 shadow-sm" style={{ backgroundColor: block.color }} />

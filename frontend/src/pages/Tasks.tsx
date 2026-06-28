@@ -34,7 +34,8 @@ export function Tasks() {
     description: '',
     priority: 'MEDIUM',
     category: 'General',
-    deadline: new Date(Date.now() + 86400000).toISOString().slice(0, 16)
+    deadline: new Date(Date.now() + 86400000).toISOString().slice(0, 16),
+    estimatedDurationMinutes: 30
   });
 
   const [aiIntent, setAiIntent] = useState('');
@@ -47,7 +48,8 @@ export function Tasks() {
       description: '',
       priority: 'MEDIUM',
       category: 'General',
-      deadline: new Date(Date.now() + 86400000).toISOString().slice(0, 16)
+      deadline: new Date(Date.now() + 86400000).toISOString().slice(0, 16),
+      estimatedDurationMinutes: 30
     });
     setIsFormOpen(true);
   };
@@ -59,16 +61,23 @@ export function Tasks() {
       description: task.description,
       priority: task.priority,
       category: task.category,
-      deadline: new Date(task.deadline).toISOString().slice(0, 16)
+      deadline: new Date(task.deadline).toISOString().slice(0, 16),
+      estimatedDurationMinutes: task.estimatedDurationMinutes || 30
     });
     setIsFormOpen(true);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const payload = {
+      ...formData,
+      deadline: formData.deadline ? new Date(formData.deadline).toISOString() : undefined,
+    };
+
     if (editingTask) {
       updateTask.mutate(
-        { id: editingTask._id, updates: formData },
+        { id: editingTask._id, updates: payload },
         {
           onSuccess: () => {
             toast.success('Task updated');
@@ -79,7 +88,7 @@ export function Tasks() {
       );
     } else {
       createTask.mutate(
-        formData,
+        payload,
         {
           onSuccess: () => {
             toast.success('Task created');

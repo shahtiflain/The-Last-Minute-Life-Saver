@@ -107,9 +107,14 @@ export function Goals() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      ...formData,
+      deadline: formData.deadline ? new Date(formData.deadline).toISOString() : undefined,
+    };
+
     if (editingGoal) {
       updateGoal.mutate(
-        { id: editingGoal._id, updates: formData },
+        { id: editingGoal._id, updates: payload },
         {
           onSuccess: () => {
             toast.success('Goal updated');
@@ -120,7 +125,7 @@ export function Goals() {
       );
     } else {
       createGoal.mutate(
-        formData,
+        payload,
         {
           onSuccess: () => {
             toast.success('Goal created');
