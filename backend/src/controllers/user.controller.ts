@@ -45,3 +45,16 @@ export const updateMe = asyncHandler(async (req: Request, res: Response) => {
 
   res.json({ status: 'success', data: user });
 });
+
+export const updateFcmToken = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user!.userId;
+  const { fcmToken } = req.body;
+  
+  if (!fcmToken) {
+    res.status(400).json({ status: 'error', message: 'fcmToken is required' });
+    return;
+  }
+  
+  await User.findOneAndUpdate({ userId }, { $set: { fcmToken } }, { upsert: true });
+  res.json({ status: 'success', message: 'FCM token updated successfully' });
+});

@@ -33,15 +33,37 @@ class SchedulerAgent(BaseAgent):
         new_tasks = [u.data for u in staged_updates if u.collection == "tasks" and u.action == "create"]
         all_tasks_to_schedule = current_tasks + new_tasks
         
-        # Mocking 2 days of 9-to-5 free slots for the LLM
         now = dt.datetime.now(dt.UTC)
         tomorrow = now + dt.timedelta(days=1)
-        mock_slots = f"""
-        Available Slots:
-        - Slot 1: {now.strftime('%Y-%m-%d')}T09:00:00Z to {now.strftime('%Y-%m-%d')}T12:00:00Z
-        - Slot 2: {now.strftime('%Y-%m-%d')}T13:00:00Z to {now.strftime('%Y-%m-%d')}T17:00:00Z
-        - Slot 3: {tomorrow.strftime('%Y-%m-%d')}T09:00:00Z to {tomorrow.strftime('%Y-%m-%d')}T12:00:00Z
-        """
+        
+        mock_slots = ""
+        # Fetch real slots if we have calendar tokens
+        oauth_tokens = context.get("calendar_tokens")
+        if oauth_tokens and isinstance(oauth_tokens, dict) and 'access_token' in oauth_tokens:
+            try:
+                from app.tools.calendar_tool import CalendarTool
+                # The auth token structure returned by google-auth-library has 'access_token', 'refresh_token'
+                # CalendarTool expects token, refresh_token, client_id, client_secret
+                from app.config.ai_settings import settings
+                creds_dict = {
+                    'token': oauth_tokens.get('access_token'),
+                    'refresh_token': oauth_tokens.get('refresh_token'),
+                    'client_id': settings.GOOGLE_CLIENT_ID,
+                    'client_secret': settings.GOOGLE_CLIENT_SECRET,
+                }
+                cal = CalendarTool(creds_dict)
+                busy_slots = cal.get_free_busy(now.isoformat(), tomorrow.isoformat())
+                mock_slots = f"\n\nReal Busy Slots Today & Tomorrow:\n{busy_slots}\n(Schedule tasks around these busy slots)"
+            except Exception as e:
+                logger.error(f"Failed to fetch real calendar slots: {e}")
+                mock_slots = "Failed to fetch real calendar slots. Assume standard working hours."
+        else:
+            mock_slots = f"""
+            Available Slots:
+            - Slot 1: {now.strftime('%Y-%m-%d')}T09:00:00Z to {now.strftime('%Y-%m-%d')}T12:00:00Z
+            - Slot 2: {now.strftime('%Y-%m-%d')}T13:00:00Z to {now.strftime('%Y-%m-%d')}T17:00:00Z
+            - Slot 3: {tomorrow.strftime('%Y-%m-%d')}T09:00:00Z to {tomorrow.strftime('%Y-%m-%d')}T12:00:00Z
+            """
         
         state_context = f"\n\nTasks to schedule: {len(all_tasks_to_schedule)}\n"
         if all_tasks_to_schedule:

@@ -11,5 +11,9 @@ router.use(requireAuth);
 router.get('/me', getMe);
 router.post('/', validateRequest(createUserSchema), createUser);
 router.put('/me', validateRequest(updateUserSchema), updateMe);
+router.put('/fcm-token', async (req, res, next) => {
+  const { updateFcmToken } = await import('../controllers/user.controller.js');
+  updateFcmToken(req, res, next);
+});
 
 export default router;

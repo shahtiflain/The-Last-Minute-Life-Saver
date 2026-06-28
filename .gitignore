@@ -32,5 +32,3 @@ credentials.json
 .env.*
 !.env.example
 
-#Firebase Admin SDK
-serviceAccountKey.json

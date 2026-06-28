@@ -60,5 +60,9 @@ export const deleteTask = asyncHandler(async (req: Request, res: Response) => {
     return;
   }
 
+  // Cascade delete pending focus blocks for this task
+  const { FocusBlock } = await import('../models/FocusBlock.js');
+  await FocusBlock.deleteMany({ taskId: (task._id as any).toString(), userId, status: 'PENDING_APPROVAL' });
+
   res.json({ status: 'success', message: 'Task deleted' });
 });

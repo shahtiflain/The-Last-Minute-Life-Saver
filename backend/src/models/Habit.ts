@@ -7,6 +7,7 @@ export interface IHabit extends Document {
   currentStreak: number;
   longestStreak: number;
   reminderEnabled: boolean;
+  completedDates: Date[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +29,7 @@ const habitSchema = new Schema<IHabit>(
     currentStreak: { type: Number, default: 0, min: 0 },
     longestStreak: { type: Number, default: 0, min: 0 },
     reminderEnabled: { type: Boolean, default: false },
+    completedDates: { type: [Date], default: [] },
   },
   {
     timestamps: true,

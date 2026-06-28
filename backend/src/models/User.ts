@@ -13,6 +13,7 @@ export interface IUser extends Document {
   };
   notificationSettings: Record<string, unknown>;
   connectedAccounts?: Record<string, unknown>;
+  fcmToken?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,6 +32,7 @@ const userSchema = new Schema<IUser>(
     },
     notificationSettings: { type: Schema.Types.Mixed, required: true, default: {} },
     connectedAccounts: { type: Schema.Types.Mixed, default: {} },
+    fcmToken: { type: String },
   },
   {
     timestamps: true,

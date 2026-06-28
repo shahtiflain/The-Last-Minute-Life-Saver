@@ -10,7 +10,7 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
     if (user) {
       const token = await user.getIdToken();
       config.headers.Authorization = `Bearer ${token}`;
@@ -28,7 +28,10 @@ api.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
-      auth.signOut();
+      if (auth) {
+        auth.signOut();
+      }
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
     return Promise.reject(error);
   }

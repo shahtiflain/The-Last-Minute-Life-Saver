@@ -6,6 +6,9 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+class InvalidFCMTokenError(Exception):
+    pass
+
 class NotificationTool:
     def __init__(self):
         """
@@ -49,6 +52,12 @@ class NotificationTool:
             response = messaging.send(message)
             logger.info(f"Successfully sent FCM message: {response}")
             return True
+        except messaging.UnregisteredError as e:
+            logger.error(f"FCM Token Unregistered: {str(e)}")
+            raise InvalidFCMTokenError(f"Token is unregistered: {str(e)}")
         except Exception as e:
+            if "invalid-registration-token" in str(e).lower() or "not-registered" in str(e).lower():
+                logger.error(f"FCM Token Invalid: {str(e)}")
+                raise InvalidFCMTokenError(f"Token is invalid: {str(e)}")
             logger.error(f"Error sending FCM message: {str(e)}")
             return False

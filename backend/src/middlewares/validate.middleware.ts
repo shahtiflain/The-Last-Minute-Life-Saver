@@ -16,8 +16,7 @@ export const validateRequest = (schema: ZodSchema) =>
         res.status(400).json({
           status: 'error',
           message: 'Validation failed',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          errors: (error as any).errors.map((e: any) => ({ path: e.path.join('.'), message: e.message }))
+          errors: (error as z.ZodError).issues.map((e) => ({ path: e.path.join('.'), message: e.message }))
         });
         return;
       }

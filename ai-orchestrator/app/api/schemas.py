@@ -21,10 +21,10 @@ class OrchestratorRequest(BaseModel):
     user_id: str
     intent: str
     context: Dict[str, Any] = Field(default_factory=dict, description="Initial context like user's existing tasks")
+    calendar_tokens: Dict[str, Any] | None = Field(default=None, description="Google Calendar OAuth tokens")
 
 class ScheduleApproveRequest(BaseModel):
     user_id: str
-    oauth_tokens: Dict[str, Any]
     blocks: List[Dict[str, Any]] = Field(..., description="The scheduled blocks to sync to Google Calendar")
 
 class OrchestratorResponse(BaseModel):

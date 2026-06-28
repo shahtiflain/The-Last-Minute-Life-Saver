@@ -11,11 +11,24 @@ scheduler = AsyncIOScheduler()
 async def run_watcher_job():
     logger.info("Running background AI Guardian (Watcher) job...")
     try:
-        # In a real app, you would iterate over active users from MongoDB.
-        # For this milestone, we'll log the intention.
-        # orchestrator = Orchestrator()
-        # await orchestrator.run(OrchestratorRequest(user_id="system_cron", intent="watch"), trace_id=str(uuid.uuid4()))
-        pass
+        from app.core.orchestrator import Orchestrator
+        from app.memory.shared_memory import SharedMemory
+        from app.api.schemas import OrchestratorRequest
+        import uuid
+        
+        shared_memory = SharedMemory()
+        # Find all users. In a real app we might only query users with active tasks.
+        users = await shared_memory.db.users.find({}).to_list(length=None)
+        
+        for user in users:
+            user_id = user.get("userId")
+            if not user_id:
+                continue
+            orchestrator = Orchestrator(shared_memory)
+            await orchestrator.orchestrate(
+                request=OrchestratorRequest(user_id=user_id, intent="watch"),
+                trace_id=str(uuid.uuid4())
+            )
     except Exception as e:
         logger.error(f"Error in background Watcher job: {e}")
 

@@ -27,7 +27,14 @@ class RiskAnalyzerAgent(BaseAgent):
         staged_updates = context.get_pending_updates()
         new_tasks = [u.data for u in staged_updates if u.collection == "tasks" and u.action == "create"]
         
-        state_context = f"\n\nExisting Tasks: {len(current_tasks)}\nNew Tasks Being Added: {len(new_tasks)}"
+        all_tasks = current_tasks + new_tasks
+        now_str = dt.datetime.now(dt.UTC).isoformat()
+        
+        state_context = f"\n\nCurrent Time: {now_str}\nExisting Tasks: {len(current_tasks)}\nNew Tasks Being Added: {len(new_tasks)}\n"
+        if all_tasks:
+            state_context += "Combined Task List:\n"
+            for t in all_tasks:
+                state_context += f"- {t.get('title', 'Unknown')} (Priority: {t.get('priority', 'MEDIUM')}, Mins: {t.get('estimatedMinutes', 0)}, Deadline: {t.get('deadline', 'None')})\n"
         
         system_prompt += state_context
 
