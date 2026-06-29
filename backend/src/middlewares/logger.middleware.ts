@@ -7,11 +7,21 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction) =
   req.headers['x-request-id'] = traceId;
   res.setHeader('X-Request-ID', traceId);
   
-  logger.info('Incoming request', {
-    method: req.method,
-    url: req.url,
-    traceId,
-    ip: req.ip,
+  const start = Date.now();
+
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    const userId = req.user?.userId || 'anonymous';
+    
+    logger.info('Request processed', {
+      method: req.method,
+      url: req.url,
+      traceId,
+      userId,
+      statusCode: res.statusCode,
+      responseTimeMs: duration,
+      ip: req.ip,
+    });
   });
   
   next();

@@ -24,7 +24,7 @@ export function useAnalytics() {
     queryKey: ['analytics', 'dashboard'],
     queryFn: async () => {
       const { data } = await api.get('/api/analytics/dashboard');
-      return data.data as DashboardAnalytics;
+      return data as DashboardAnalytics;
     },
   });
 }

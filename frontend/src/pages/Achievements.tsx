@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Trophy, Medal, Star, Flame, Award, Zap, Shield, Crown, Target } from 'lucide-react';
+import { Trophy, Medal, Star, Flame, Zap, Shield, Crown, Target } from 'lucide-react';
 import { useTasks } from '../hooks/useTasks';
 import { useHabits } from '../hooks/useHabits';
 import { useGoals } from '../hooks/useGoals';
@@ -180,7 +180,7 @@ export function Achievements() {
             <div>
               <h2 className="text-xl font-bold text-text-primary mb-6">Badge Collection</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {badges.map((badge, idx) => (
+                {badges.map((badge) => (
                   <motion.div variants={item} key={badge.id}>
                     <Card className={`h-full transition-all duration-300 ${badge.unlocked ? `${badge.border} hover:scale-[1.02] ${badge.glow}` : 'border-border-color/30 opacity-50 grayscale'}`}>
                       <CardContent className="p-6 flex items-start gap-4">

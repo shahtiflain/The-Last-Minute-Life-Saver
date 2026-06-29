@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from './features/auth/AuthProvider';
+import { AuthProvider } from './features/auth/AuthProvider';
 import { ErrorBoundary } from './components/layout/ErrorBoundary';
 import { MainLayout } from './components/layout/MainLayout';
 
@@ -28,11 +28,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { currentUser, loading } = useAuth();
-  if (loading) return <div>Loading...</div>;
-  return currentUser ? <>{children}</> : <Navigate to="/login" />;
-};
+
 
 import { Toaster } from 'react-hot-toast';
 import { useSettingsStore } from './store/useSettingsStore';

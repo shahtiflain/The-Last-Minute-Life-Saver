@@ -37,12 +37,13 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
 export function ProductivityScoreWidget() {
   const { data: analytics, isLoading } = useAnalytics();
   const score = analytics?.productivityScore?.score ?? 72;
-  const trend = analytics?.productivityScore?.trend ?? 'stable';
+  const rawTrend = analytics?.productivityScore?.trend ?? '±0%';
   const weeklyData = generateWeeklyData(score);
 
-  const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
-  const trendColor = trend === 'up' ? 'text-success' : trend === 'down' ? 'text-danger' : 'text-text-tertiary';
-  const trendLabel = trend === 'up' ? '+12%' : trend === 'down' ? '-8%' : '±0%';
+  const direction = rawTrend.startsWith('+') ? 'up' : rawTrend.startsWith('-') ? 'down' : 'stable';
+  const TrendIcon = direction === 'up' ? TrendingUp : direction === 'down' ? TrendingDown : Minus;
+  const trendColor = direction === 'up' ? 'text-success' : direction === 'down' ? 'text-danger' : 'text-text-tertiary';
+  const trendLabel = rawTrend;
 
   return (
     <Card className="h-full">

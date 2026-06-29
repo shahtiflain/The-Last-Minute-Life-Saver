@@ -50,7 +50,12 @@ export const googleCallback = asyncHandler(async (req: Request, res: Response) =
 
     res.json({ status: 'success', message: 'Google Calendar connected successfully' });
   } catch (error: any) {
-    console.error('Error exchanging Google OAuth code:', error);
+    import('../utils/logger.js').then(({ logger }) => {
+      logger.error('Error exchanging Google OAuth code', { 
+        error: error.message, 
+        response: error.response?.data 
+      });
+    });
     res.status(500).json({ status: 'error', message: 'Failed to connect Google Calendar' });
   }
 });

@@ -7,6 +7,9 @@ import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { Spinner } from '../components/ui/Spinner';
 import { Badge } from '../components/ui/Badge';
+import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || '';
 
 interface FocusBlock {
   _id: string;
@@ -31,10 +34,12 @@ const item = {
   show: { opacity: 1, x: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } },
 } as const;
 
-export function Calendar() {
+function CalendarInner() {
   const [blocks, setBlocks] = useState<FocusBlock[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isApproving, setIsApproving] = useState(false);
+  const [isCalendarConnected, setIsCalendarConnected] = useState<boolean | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const fetchBlocks = async () => {
     try {
@@ -53,8 +58,41 @@ export function Calendar() {
   };
 
   useEffect(() => {
-    fetchBlocks();
+    api.get('/api/auth/google/status').then((res: any) => {
+      const connected = res.data?.isConnected ?? res.isConnected ?? false;
+      setIsCalendarConnected(connected);
+      if (connected) {
+        fetchBlocks();
+      } else {
+        setIsLoading(false);
+      }
+    }).catch(() => {
+      setIsLoading(false);
+      setIsCalendarConnected(false);
+    });
   }, []);
+
+  const login = useGoogleLogin({
+    flow: 'auth-code',
+    scope: 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.readonly',
+    onSuccess: async (codeResponse) => {
+      setIsConnecting(true);
+      try {
+        await api.post('/api/auth/google/callback', { code: codeResponse.code });
+        setIsCalendarConnected(true);
+        toast.success('Google Calendar connected successfully!');
+        setIsLoading(true);
+        fetchBlocks();
+      } catch {
+        toast.error('Failed to connect Google Calendar');
+      } finally {
+        setIsConnecting(false);
+      }
+    },
+    onError: () => {
+      toast.error('Google Login Failed');
+    },
+  });
 
   const handleApprove = async () => {
     const pendingBlocks = blocks.filter(b => b.status === 'PENDING_APPROVAL');
@@ -76,6 +114,29 @@ export function Calendar() {
   };
 
   const pendingCount = blocks.filter(b => b.status === 'PENDING_APPROVAL').length;
+
+  if (isCalendarConnected === false) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="h-full flex flex-col items-center justify-center max-w-lg mx-auto text-center space-y-6 px-4"
+      >
+        <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center">
+          <CalendarIcon className="w-12 h-12 text-primary" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-text-primary mb-2">Connect Google Calendar</h2>
+          <p className="text-text-secondary leading-relaxed">
+            Connect your Google Calendar to enable AI scheduling. Your tasks and focus blocks will be automatically synced.
+          </p>
+        </div>
+        <Button onClick={() => login()} isLoading={isConnecting} variant="primary" className="w-full max-w-sm py-2.5 text-base">
+          Connect Calendar
+        </Button>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div 
@@ -184,5 +245,39 @@ export function Calendar() {
         )}
       </div>
     </motion.div>
+  );
+}
+
+export function Calendar() {
+  if (!GOOGLE_CLIENT_ID) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-[calc(100vh-4rem)] flex flex-col"
+      >
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-border-color">
+          <div>
+            <h1 className="text-3xl font-bold text-text-primary tracking-tight">Schedule</h1>
+            <p className="text-text-secondary mt-1">Review AI-proposed focus blocks and your synced calendar.</p>
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-center py-20 text-center bg-bg-surface border border-border-color rounded-[20px] shadow-sm max-w-2xl mx-auto mt-10">
+          <div className="w-16 h-16 bg-danger/10 rounded-2xl flex items-center justify-center mb-6">
+            <CalendarIcon className="w-8 h-8 text-danger" />
+          </div>
+          <h2 className="text-2xl font-bold text-text-primary mb-3 tracking-tight">Configuration Missing</h2>
+          <p className="text-text-secondary mb-8 max-w-md mx-auto">
+            Google Calendar synchronization requires a valid <code>VITE_GOOGLE_CLIENT_ID</code> in your frontend <code>.env</code> file. Please configure it and restart the server.
+          </p>
+        </div>
+      </motion.div>
+    );
+  }
+
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <CalendarInner />
+    </GoogleOAuthProvider>
   );
 }

@@ -4,7 +4,7 @@ import { useTasks } from '../hooks/useTasks';
 import { Card, CardContent } from '../components/ui/Card';
 import { Spinner } from '../components/ui/Spinner';
 import { 
-  LineChart, Line, AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
+  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
 } from 'recharts';
 import { Activity, Target, Zap, Clock } from 'lucide-react';
@@ -228,7 +228,7 @@ export function Analytics() {
                               dataKey="value"
                               stroke="none"
                             >
-                              {categoryData.map((entry, index) => (
+                              {categoryData.map((_, index) => (
                                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                               ))}
                             </Pie>

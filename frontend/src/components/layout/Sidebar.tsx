@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard, CheckSquare, Target, Activity, Calendar,
-  Settings, Sparkles, Search, ChevronLeft, ChevronRight, User, Timer, LineChart, Trophy
+  Settings, Sparkles, ChevronLeft, ChevronRight, User, Timer, LineChart, Trophy
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -84,9 +84,7 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
     onCollapsedChange?.(collapsed);
   }, [collapsed, onCollapsedChange]);
 
-  const triggerCommandPalette = () => {
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
-  };
+
 
   return (
     <motion.div
@@ -116,36 +114,6 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
         </div>
       </div>
 
-      {/* Search button */}
-      <div className="px-3 py-3 flex-shrink-0">
-        <Tooltip label="Search (Ctrl+K)" show={collapsed}>
-          <button
-            onClick={triggerCommandPalette}
-            className={cn(
-              "flex items-center gap-2 text-sm text-text-tertiary bg-bg-surface-hover/60 border border-border-color rounded-xl hover:bg-bg-surface-hover hover:text-text-secondary transition-all",
-              collapsed ? "w-10 h-10 justify-center p-0" : "w-full px-3 py-2"
-            )}
-          >
-            <Search className="w-4 h-4 flex-shrink-0" />
-            <AnimatePresence>
-              {!collapsed && (
-                <motion.div
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2 overflow-hidden whitespace-nowrap flex-1"
-                >
-                  <span className="flex-1 text-left">Search...</span>
-                  <kbd className="hidden sm:inline-flex px-1.5 py-0.5 text-xs font-semibold text-text-tertiary bg-bg-base border border-border-color rounded-md">
-                    ⌘K
-                  </kbd>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </button>
-        </Tooltip>
-      </div>
 
       {/* Nav items */}
       <div className="flex-1 overflow-y-auto py-2 premium-scrollbar">

@@ -47,7 +47,7 @@ async def test_scheduler_agent_with_real_calendar():
     context = RequestContext(user_id="test_user", trace_id="trace_1")
     context.load_state({"calendar_tokens": {"access_token": "mock_token"}})
     
-    with patch('app.agents.scheduler_agent.CalendarTool', create=True) as mock_calendar_tool_class:
+    with patch('app.tools.calendar_tool.CalendarTool', create=True) as mock_calendar_tool_class:
         mock_cal_instance = MagicMock()
         mock_cal_instance.get_free_busy.return_value = [{"start": "2026-01-01T09:00:00Z", "end": "2026-01-01T10:00:00Z"}]
         mock_calendar_tool_class.return_value = mock_cal_instance

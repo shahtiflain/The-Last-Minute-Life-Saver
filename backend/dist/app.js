@@ -12,10 +12,17 @@ import authRoutes from './routes/auth.routes.js';
 import aiRoutes from './routes/ai.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import focusBlockRoutes from './routes/focus_block.routes.js';
+import notificationRoutes from './routes/notification.routes.js';
 const app = express();
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: false }));
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin: [
+        process.env.FRONTEND_URL || 'http://localhost:5173',
+        'http://localhost:5174',
+        'http://127.0.0.1:5173',
+        'http://127.0.0.1:5174',
+        'https://hustlr.app'
+    ],
     credentials: true,
 }));
 app.use(express.json());
@@ -36,6 +43,7 @@ app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/ai', aiLimiter, aiRoutes);
 app.use('/api/analytics', generalLimiter, analyticsRoutes);
 app.use('/api/focus-blocks', generalLimiter, focusBlockRoutes);
+app.use('/api/notifications', generalLimiter, notificationRoutes);
 app.use(errorHandler);
 export default app;
 //# sourceMappingURL=app.js.map
