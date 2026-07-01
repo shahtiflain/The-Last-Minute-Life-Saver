@@ -32,3 +32,4 @@ credentials.json
 .env.*
 !.env.example
 
+.pytest_cache/
