@@ -1,0 +1,28 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: hustlr-pipeline
+description: Delivery pipeline for Hustlr full-stack app
+serialPipeline:
+  stages:
+  - targetId: staging
+    profiles: []
+  - targetId: prod
+    profiles: []
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: staging
+description: Staging environment on Cloud Run
+run:
+  location: projects/YOUR_PROJECT_ID/locations/us-central1
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: prod
+description: Production environment on Cloud Run
+requireApproval: true
+run:
+  location: projects/YOUR_PROJECT_ID/locations/us-central1
