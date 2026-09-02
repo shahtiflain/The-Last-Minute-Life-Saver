@@ -17,9 +17,13 @@ api.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       } catch (err) {
         console.error('Failed to get Firebase token:', err);
+        const storedToken = localStorage.getItem('google_oauth_token') || 'mock-token';
+        config.headers.Authorization = `Bearer ${storedToken}`;
       }
+    } else {
+      const storedToken = localStorage.getItem('google_oauth_token') || 'mock-token';
+      config.headers.Authorization = `Bearer ${storedToken}`;
     }
-    console.log('Sending request to:', config.baseURL, config.url);
     return config;
   },
   (error) => {

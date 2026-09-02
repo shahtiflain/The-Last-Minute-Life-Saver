@@ -72,7 +72,9 @@ export function Tasks() {
     
     const payload = {
       ...formData,
-      deadline: formData.deadline ? new Date(formData.deadline).toISOString() : undefined,
+      category: formData.category?.trim() || 'General',
+      estimatedDurationMinutes: Number(formData.estimatedDurationMinutes) || 30,
+      deadline: formData.deadline ? new Date(formData.deadline).toISOString() : new Date(Date.now() + 86400000).toISOString(),
     };
 
     if (editingTask) {

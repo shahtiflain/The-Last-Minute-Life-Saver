@@ -109,7 +109,8 @@ export function Goals() {
     e.preventDefault();
     const payload = {
       ...formData,
-      deadline: formData.deadline ? new Date(formData.deadline).toISOString() : undefined,
+      goalType: formData.goalType || 'PERSONAL',
+      deadline: formData.deadline ? new Date(formData.deadline).toISOString() : new Date(Date.now() + 30 * 86400000).toISOString(),
     };
 
     if (editingGoal) {

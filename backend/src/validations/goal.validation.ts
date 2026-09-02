@@ -5,9 +5,9 @@ export const createGoalSchema = z.object({
   body: z.object({
     title: z.string().min(1),
     description: z.string().optional(),
-    goalType: z.nativeEnum(GoalType),
+    goalType: z.nativeEnum(GoalType).optional(),
     progress: z.number().min(0).max(100).optional(),
-    deadline: z.string().datetime(),
+    deadline: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date" }),
     linkedTasks: z.array(z.string()).optional(),
   }),
 });
@@ -18,7 +18,7 @@ export const updateGoalSchema = z.object({
     description: z.string().optional(),
     goalType: z.nativeEnum(GoalType).optional(),
     progress: z.number().min(0).max(100).optional(),
-    deadline: z.string().datetime().optional(),
+    deadline: z.string().refine((val) => !isNaN(Date.parse(val)), { message: "Invalid date" }).optional(),
     linkedTasks: z.array(z.string()).optional(),
   }),
   params: z.object({

@@ -60,9 +60,14 @@ export function Habits() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      ...formData,
+      frequencyDays: formData.frequencyDays?.length ? formData.frequencyDays : [0, 1, 2, 3, 4, 5, 6],
+    };
+
     if (editingHabit) {
       updateHabit.mutate(
-        { id: editingHabit._id, updates: formData },
+        { id: editingHabit._id, updates: payload },
         {
           onSuccess: () => {
             toast.success('Habit updated');
@@ -73,7 +78,7 @@ export function Habits() {
       );
     } else {
       createHabit.mutate(
-        formData,
+        payload,
         {
           onSuccess: () => {
             toast.success('Habit created');
