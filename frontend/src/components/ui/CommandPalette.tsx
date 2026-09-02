@@ -162,7 +162,7 @@ export function CommandPalette() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.15 }}
-          className="fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] bg-black/50 backdrop-blur-md"
+          className="fixed inset-0 z-[100] flex items-start justify-center pt-[5vh] sm:pt-[15vh] px-3 sm:px-4 bg-black/50 backdrop-blur-md"
           onClick={close}
         >
           <motion.div
@@ -170,7 +170,7 @@ export function CommandPalette() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -12 }}
             transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            className="w-full max-w-xl mx-4 bg-bg-surface/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-border-highlight/50 overflow-hidden"
+            className="w-full max-w-xl bg-bg-surface/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-border-highlight/50 overflow-hidden"
             onClick={e => e.stopPropagation()}
           >
             {/* Search input */}

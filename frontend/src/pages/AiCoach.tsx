@@ -455,7 +455,7 @@ export function AiCoach() {
                   el.style.height = Math.min(el.scrollHeight, 120) + 'px';
                 }}
               />
-              <div className="absolute right-3 bottom-2.5 text-[10px] text-text-tertiary">
+              <div className="hidden sm:block absolute right-3 bottom-2.5 text-[10px] text-text-tertiary pointer-events-none">
                 Shift+Enter for newline
               </div>
             </div>

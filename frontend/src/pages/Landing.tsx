@@ -137,7 +137,7 @@ export function Landing() {
               AI-powered productivity platform
             </div>
             
-            <h1 className="text-5xl sm:text-7xl lg:text-[80px] font-black tracking-[-0.04em] leading-[1.05] mb-6">
+            <h1 className="text-3xl sm:text-6xl lg:text-[80px] font-black tracking-[-0.04em] leading-[1.1] sm:leading-[1.05] mb-6">
               Work at the{' '}
               <br className="hidden sm:block" />
               speed of{' '}

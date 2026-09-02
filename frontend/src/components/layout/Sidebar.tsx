@@ -66,9 +66,10 @@ function Tooltip({ label, children, show }: TooltipProps) {
 
 interface SidebarProps {
   onCollapsedChange?: (collapsed: boolean) => void;
+  onNavigate?: () => void;
 }
 
-export function Sidebar({ onCollapsedChange }: SidebarProps) {
+export function Sidebar({ onCollapsedChange, onNavigate }: SidebarProps) {
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem('sidebar-collapsed') === 'true';
@@ -127,6 +128,7 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
             <Tooltip key={item.name} label={item.name} show={collapsed}>
               <NavLink
                 to={item.to}
+                onClick={onNavigate}
                 className={({ isActive }) =>
                   cn(
                     'group flex items-center text-sm font-medium rounded-xl transition-all duration-200 relative overflow-hidden',
@@ -181,6 +183,7 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
             <Tooltip key={item.name} label={item.name} show={collapsed}>
               <NavLink
                 to={item.to}
+                onClick={onNavigate}
                 className={({ isActive }) =>
                   cn(
                     'group flex items-center text-sm font-medium rounded-xl transition-all duration-200',
@@ -211,10 +214,10 @@ export function Sidebar({ onCollapsedChange }: SidebarProps) {
         </nav>
       </div>
 
-      {/* Collapse toggle button */}
+      {/* Collapse toggle button (desktop only) */}
       <button
         onClick={() => setCollapsed(c => !c)}
-        className="absolute bottom-20 -right-3 w-6 h-6 bg-bg-surface border border-border-color rounded-full flex items-center justify-center shadow-premium hover:bg-bg-surface-hover hover:shadow-glow transition-all z-10 text-text-tertiary hover:text-text-primary"
+        className="hidden md:flex absolute bottom-20 -right-3 w-6 h-6 bg-bg-surface border border-border-color rounded-full items-center justify-center shadow-premium hover:bg-bg-surface-hover hover:shadow-glow transition-all z-10 text-text-tertiary hover:text-text-primary"
         title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
         {collapsed ? (

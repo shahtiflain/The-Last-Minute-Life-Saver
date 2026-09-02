@@ -222,7 +222,7 @@ export function Habits() {
                               </div>
                             </div>
                           </div>
-                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                             <Button variant="ghost" size="sm" onClick={() => openEditForm(habit)} className="p-1 h-8 w-8 text-text-secondary hover:text-primary">
                               <Edit2 className="h-4 w-4" />
                             </Button>
@@ -232,14 +232,14 @@ export function Habits() {
                           </div>
                         </div>
                         
-                        <div className="flex justify-between mb-2">
+                        <div className="flex justify-between gap-1 mb-2">
                           {daysLabels.map((day, i) => {
                             const isScheduled = habit.frequencyDays.includes(i);
                             return (
                               <div 
                                 key={i} 
                                 className={cn(
-                                  "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all",
+                                  "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold transition-all",
                                   isScheduled 
                                     ? "bg-primary text-white shadow-[0_0_10px_rgba(var(--color-primary-rgb),0.3)]" 
                                     : "bg-bg-surface border border-border-color/50 text-text-tertiary"

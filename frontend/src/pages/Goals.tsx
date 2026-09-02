@@ -204,12 +204,12 @@ export function Goals() {
                         <span className="text-sm font-semibold text-text-secondary">{new Date(goal.deadline).toLocaleDateString()}</span>
                       </div>
                       
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+                        <div className="flex items-center gap-1.5 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
                           <Button variant="outline" size="sm" className="h-8 px-2 text-xs" onClick={() => updateProgress(goal, goal.progress - 10)} disabled={goal.progress <= 0}>-10%</Button>
                           <Button variant="outline" size="sm" className="h-8 px-2 text-xs" onClick={() => updateProgress(goal, goal.progress + 10)} disabled={goal.progress >= 100}>+10%</Button>
                         </div>
-                        <div className="flex items-center gap-2 opacity-50 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center gap-2 opacity-100 sm:opacity-50 sm:group-hover:opacity-100 transition-opacity ml-auto">
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => openEditForm(goal)}>
                             <Edit2 className="h-4 w-4" />
                           </Button>

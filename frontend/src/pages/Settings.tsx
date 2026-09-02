@@ -56,17 +56,17 @@ function PremiumCard({ title, icon, children, show = true }: { title: string, ic
 function SettingRow({ icon, title, description, control, show = true }: { icon: React.ReactNode, title: string, description: string, control: React.ReactNode, show?: boolean }) {
   if (!show) return null;
   return (
-    <div className="flex items-center justify-between py-4 border-b border-border-color/30 last:border-0 group hover:bg-bg-surface-hover/30 px-3 -mx-3 rounded-xl transition-colors">
-      <div className="flex items-start gap-4">
-        <div className="mt-0.5 text-text-tertiary group-hover:text-primary transition-colors duration-200">
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between py-4 border-b border-border-color/30 last:border-0 group hover:bg-bg-surface-hover/30 px-3 -mx-3 rounded-xl transition-colors gap-3 sm:gap-4">
+      <div className="flex items-start gap-3 sm:gap-4">
+        <div className="mt-0.5 text-text-tertiary group-hover:text-primary transition-colors duration-200 flex-shrink-0">
           {icon}
         </div>
         <div>
-          <p className="font-medium text-text-primary">{title}</p>
-          <p className="text-[13px] text-text-secondary mt-0.5 leading-relaxed">{description}</p>
+          <p className="font-medium text-text-primary text-sm sm:text-base">{title}</p>
+          <p className="text-[12px] sm:text-[13px] text-text-secondary mt-0.5 leading-relaxed">{description}</p>
         </div>
       </div>
-      <div className="ml-4 flex-shrink-0">
+      <div className="ml-8 sm:ml-4 flex-shrink-0">
         {control}
       </div>
     </div>

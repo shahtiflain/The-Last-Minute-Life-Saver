@@ -69,7 +69,7 @@ export function FocusMode() {
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
   return (
-    <div className="min-h-[calc(100vh-2rem)] flex flex-col -m-6 p-6 bg-[#0a0a0c] text-white overflow-hidden">
+    <div className="min-h-[calc(100vh-2rem)] flex flex-col -m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8 bg-[#0a0a0c] text-white overflow-hidden">
       {/* Immersive Background */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className={`absolute top-0 left-1/4 w-[800px] h-[800px] rounded-full blur-[150px] mix-blend-screen transition-colors duration-1000 ${isBreak ? 'bg-success/10' : 'bg-primary/10'}`} />
@@ -78,7 +78,7 @@ export function FocusMode() {
 
       <div className="relative z-10 max-w-5xl mx-auto w-full flex-1 flex flex-col">
         {/* Header Navigation */}
-        <div className="flex justify-between items-center mb-12 pt-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8 sm:mb-12 pt-2 sm:pt-4 gap-4">
           <Link to="/" className="flex items-center gap-2 text-text-tertiary hover:text-white transition-colors group">
             <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
             <span className="font-medium">Exit Focus Mode</span>
@@ -87,13 +87,13 @@ export function FocusMode() {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => { if(isBreak) switchMode(); }}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${!isBreak ? 'bg-primary text-white shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)]' : 'bg-white/5 text-text-tertiary hover:text-white hover:bg-white/10'}`}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${!isBreak ? 'bg-primary text-white shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.4)]' : 'bg-white/5 text-text-tertiary hover:text-white hover:bg-white/10'}`}
             >
               Focus (25m)
             </button>
             <button 
               onClick={() => { if(!isBreak) switchMode(); }}
-              className={`px-4 py-2 rounded-full text-sm font-semibold transition-all ${isBreak ? 'bg-success text-white shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-white/5 text-text-tertiary hover:text-white hover:bg-white/10'}`}
+              className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all ${isBreak ? 'bg-success text-white shadow-[0_0_20px_rgba(34,197,94,0.4)]' : 'bg-white/5 text-text-tertiary hover:text-white hover:bg-white/10'}`}
             >
               Break (5m)
             </button>
@@ -101,16 +101,16 @@ export function FocusMode() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-16 pb-20">
+        <div className="flex-1 flex flex-col lg:flex-row items-center justify-center gap-8 sm:gap-16 pb-12 sm:pb-20">
           
           {/* Timer Section */}
           <div className="flex flex-col items-center">
-            <div className="relative w-[340px] h-[340px] flex items-center justify-center">
+            <div className="relative w-[270px] h-[270px] sm:w-[340px] sm:h-[340px] flex items-center justify-center">
               {/* Outer Glow Ring */}
               <div className={`absolute inset-0 rounded-full blur-3xl opacity-20 transition-colors duration-1000 ${isBreak ? 'bg-success' : 'bg-primary'}`} />
               
               {/* SVG Ring */}
-              <svg className="absolute inset-0 w-full h-full transform -rotate-90 drop-shadow-xl">
+              <svg className="absolute inset-0 w-full h-full transform -rotate-90 drop-shadow-xl" viewBox="0 0 340 340">
                 <circle
                   className="text-white/5"
                   strokeWidth="8"
@@ -144,12 +144,12 @@ export function FocusMode() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -10, scale: 1.05 }}
                     transition={{ duration: 0.2 }}
-                    className="text-[6rem] font-black tracking-tighter tabular-nums leading-none drop-shadow-lg"
+                    className="text-4xl sm:text-6xl lg:text-[6rem] font-black tracking-tighter tabular-nums leading-none drop-shadow-lg"
                   >
                     {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
                   </motion.div>
                 </AnimatePresence>
-                <div className={`mt-6 text-sm font-semibold tracking-widest uppercase flex items-center gap-2 ${isBreak ? 'text-success' : 'text-primary'}`}>
+                <div className={`mt-3 sm:mt-6 text-xs sm:text-sm font-semibold tracking-widest uppercase flex items-center gap-2 ${isBreak ? 'text-success' : 'text-primary'}`}>
                   {isBreak ? <Coffee className="w-4 h-4" /> : <TargetIcon className="w-4 h-4" />}
                   {isBreak ? 'Break Time' : 'Deep Work'}
                 </div>

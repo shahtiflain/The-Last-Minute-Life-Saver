@@ -37,7 +37,7 @@ export function Profile() {
         </CardHeader>
         <CardContent className="space-y-6">
           {currentUser && (
-            <div className="flex items-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center text-center sm:text-left gap-4 sm:gap-6">
               <div className="relative">
                 {currentUser.photoURL ? (
                   <img src={currentUser.photoURL} alt="Profile" className="w-20 h-20 rounded-2xl shadow-premium object-cover" />

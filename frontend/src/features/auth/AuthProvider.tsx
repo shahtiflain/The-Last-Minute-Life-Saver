@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.addEventListener('auth:unauthorized', handleUnauthorized);
 
     return () => {
-      unsubscribe();
+      unsubscribe?.();
       window.removeEventListener('auth:unauthorized', handleUnauthorized);
     };
   }, []);

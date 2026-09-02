@@ -103,9 +103,9 @@ export function AiCopilotWidget() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-primary text-white shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] flex items-center justify-center hover:bg-primary/90 transition-colors"
+            className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary text-white shadow-[0_0_20px_rgba(var(--color-primary-rgb),0.5)] flex items-center justify-center hover:bg-primary/90 transition-colors"
           >
-            <Sparkles className="w-6 h-6" />
+            <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
           </motion.button>
         )}
       </AnimatePresence>
@@ -117,7 +117,7 @@ export function AiCopilotWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95, transition: { duration: 0.2 } }}
-            className="fixed bottom-6 right-6 z-50 w-[380px] h-[600px] max-h-[85vh] max-w-[calc(100vw-3rem)] rounded-[24px] bg-bg-surface/80 backdrop-blur-2xl border border-border-color/60 shadow-2xl flex flex-col overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/5 before:to-transparent before:pointer-events-none"
+            className="fixed bottom-3 right-3 left-3 sm:left-auto sm:bottom-6 sm:right-6 z-50 w-auto sm:w-[380px] h-[520px] sm:h-[600px] max-h-[82vh] rounded-[24px] bg-bg-surface/90 backdrop-blur-2xl border border-border-color/60 shadow-2xl flex flex-col overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/5 before:to-transparent before:pointer-events-none"
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border-color/50 bg-bg-surface/50">

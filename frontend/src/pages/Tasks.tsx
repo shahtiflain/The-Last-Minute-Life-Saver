@@ -263,7 +263,7 @@ export function Tasks() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" size="sm" onClick={() => openEditForm(task)} className="h-8 w-8 p-0 rounded-lg bg-bg-surface-hover hover:bg-bg-surface border border-border-color/50">
                         <Edit2 className="h-4 w-4 text-text-secondary" />
                       </Button>

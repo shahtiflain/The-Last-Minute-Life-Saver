@@ -162,7 +162,7 @@ function CalendarInner() {
         </Button>
       </div>
 
-      <div className="flex-1 overflow-auto bg-bg-surface-hover/30 rounded-3xl p-6 border border-border-color/50 premium-scrollbar">
+      <div className="flex-1 overflow-auto bg-bg-surface-hover/30 rounded-3xl p-4 sm:p-6 border border-border-color/50 premium-scrollbar">
         {isLoading ? (
           <div className="h-full flex items-center justify-center">
             <Spinner />

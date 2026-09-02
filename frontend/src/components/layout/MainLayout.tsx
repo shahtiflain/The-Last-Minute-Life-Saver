@@ -24,10 +24,11 @@ export function MainLayout() {
 
       {/* Sidebar */}
       <div
-        className="fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0"
-        style={{ transform: sidebarOpen ? 'translateX(0)' : undefined }}
+        className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
       >
-        <Sidebar />
+        <Sidebar onNavigate={() => setSidebarOpen(false)} />
       </div>
 
       {/* Main content — adjusts to sidebar width */}

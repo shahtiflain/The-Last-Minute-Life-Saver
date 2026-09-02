@@ -97,7 +97,7 @@ export function TasksKanban({ tasks, onStatusChange, onTaskClick }: KanbanProps)
     <div className="flex h-full w-full gap-6 overflow-x-auto pb-4 premium-scrollbar">
       <DndContext sensors={sensors} collisionDetection={closestCorners} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         {COLUMNS.map(col => (
-          <div key={col.id} className="flex flex-col min-w-[300px] max-w-[350px] flex-1 bg-bg-surface-hover/30 rounded-2xl p-4 border border-border-color/50">
+          <div key={col.id} className="flex flex-col min-w-[270px] sm:min-w-[300px] max-w-[350px] flex-1 bg-bg-surface-hover/30 rounded-2xl p-4 border border-border-color/50">
             <div className="flex items-center justify-between mb-4 px-1">
               <div className="flex items-center gap-2">
                 <col.icon className={"w-5 h-5 "} />
