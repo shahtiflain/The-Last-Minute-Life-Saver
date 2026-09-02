@@ -33,7 +33,7 @@ export const orchestrate = asyncHandler(async (req: Request, res: Response) => {
     }
   }
 
-  const orchestratorUrl = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+  const orchestratorUrl = process.env.AI_ORCHESTRATOR_URL || 'http://localhost:8000';
   const internalApiKey = process.env.INTERNAL_API_KEY || 'your_secure_internal_key'; // default matching ai-orchestrator/.env.example
 
   const payload = {
@@ -137,7 +137,7 @@ export const approveSchedule = asyncHandler(async (req: Request, res: Response) 
     return;
   }
 
-  const orchestratorUrl = process.env.AI_SERVICE_URL || 'http://localhost:8000';
+  const orchestratorUrl = process.env.AI_ORCHESTRATOR_URL || 'http://localhost:8000';
   const internalApiKey = process.env.INTERNAL_API_KEY || 'your_secure_internal_key';
 
   const payload = {

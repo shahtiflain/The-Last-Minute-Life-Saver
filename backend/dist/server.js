@@ -13,7 +13,7 @@ try {
     const { default: app } = await import('./app.js');
     const { connectDB } = await import('./config/database.js');
     await connectDB();
-    app.listen(PORT, () => {
+    app.listen(Number(PORT), '0.0.0.0', () => {
         console.log(`Server running on port ${PORT}`);
     });
 }
