@@ -75,7 +75,6 @@ export function Dashboard() {
         <NotificationsWidget />
         <AiRecommendationsWidget />
       </div>
-    </motion.div>
     </div>
   );
 }

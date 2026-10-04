@@ -1,17 +1,13 @@
 import { Menu, Moon, Sun, Search, Calendar, Sparkles, User } from 'lucide-react';
 import { useThemeStore } from '../../store/themeStore';
+import { auth } from '../../config/firebase';
 import { Button } from '../ui/Button';
-import { useAuth } from '../../features/auth/AuthProvider';
-import toast from 'react-hot-toast';
-import { ProfileDropdown } from './ProfileDropdown';
-import logo from '../../assets/logo.png';
 
 export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   const { isDark, toggleTheme } = useThemeStore();
-  const { currentUser } = useAuth();
 
-  const triggerSearch = () => {
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true, bubbles: true }));
+  const handleLogout = () => {
+    auth.signOut();
   };
 
   return (
