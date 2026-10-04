@@ -1,15 +1,17 @@
 import { cn } from '../../utils/cn';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'success' | 'warning' | 'danger';
+  variant?: 'default' | 'premium' | 'success' | 'warning' | 'danger' | 'outline';
 }
 
 export function Badge({ className, variant = 'default', ...props }: BadgeProps) {
   const variants = {
-    default: 'bg-bg-base text-text-primary border-border-color',
-    success: 'bg-secondary/10 text-secondary border-secondary/20',
-    warning: 'bg-warning/10 text-warning border-warning/20',
-    danger: 'bg-danger/10 text-danger border-danger/20',
+    default: 'bg-bg-surface-hover text-text-primary border-border-color',
+    premium: 'bg-primary/5 text-primary border-primary/20 shadow-sm',
+    success: 'bg-success/5 text-success border-success/20',
+    warning: 'bg-warning/5 text-warning border-warning/20',
+    danger: 'bg-danger/5 text-danger border-danger/20',
+    outline: 'bg-transparent text-text-secondary border-border-color',
   };
 
   return (

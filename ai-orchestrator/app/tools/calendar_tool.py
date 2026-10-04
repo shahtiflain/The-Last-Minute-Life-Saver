@@ -6,6 +6,9 @@ from app.utils.logger import get_logger
 
 logger = get_logger(__name__)
 
+class CalendarAuthError(Exception):
+    pass
+
 class CalendarTool:
     def __init__(self, credentials_dict: Dict[str, Any]):
         """
@@ -42,6 +45,8 @@ class CalendarTool:
             return busy_slots
         except HttpError as error:
             logger.error(f"An error occurred fetching free/busy: {error}")
+            if error.resp.status in [401, 403]:
+                raise CalendarAuthError("Google Calendar authentication failed (token expired or revoked).")
             raise
 
     def insert_event(self, title: str, start_time: str, end_time: str, time_zone: str = 'UTC', extended_properties: Optional[Dict[str, str]] = None) -> str:
@@ -71,4 +76,6 @@ class CalendarTool:
             return event_result.get('id', '')
         except HttpError as error:
             logger.error(f"An error occurred inserting event: {error}")
+            if error.resp.status in [401, 403]:
+                raise CalendarAuthError("Google Calendar authentication failed (token expired or revoked).")
             raise

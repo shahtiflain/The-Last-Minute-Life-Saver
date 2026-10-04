@@ -11,11 +11,24 @@ scheduler = AsyncIOScheduler()
 async def run_watcher_job():
     logger.info("Running background AI Guardian (Watcher) job...")
     try:
-        # In a real app, you would iterate over active users from MongoDB.
-        # For this milestone, we'll log the intention.
-        # orchestrator = Orchestrator()
-        # await orchestrator.run(OrchestratorRequest(user_id="system_cron", intent="watch"), trace_id=str(uuid.uuid4()))
-        pass
+        from app.core.orchestrator import Orchestrator
+        from app.memory.shared_memory import SharedMemory
+        from app.api.schemas import OrchestratorRequest
+        import uuid
+        
+        shared_memory = SharedMemory()
+        # Find all users. In a real app we might only query users with active tasks.
+        users = await shared_memory.db.users.find({}).to_list(length=None)
+        
+        for user in users:
+            user_id = user.get("userId")
+            if not user_id:
+                continue
+            orchestrator = Orchestrator(shared_memory)
+            await orchestrator.orchestrate(
+                request=OrchestratorRequest(user_id=user_id, intent="watch"),
+                trace_id=str(uuid.uuid4())
+            )
     except Exception as e:
         logger.error(f"Error in background Watcher job: {e}")
 
@@ -40,8 +53,52 @@ app = FastAPI(
     lifespan=lifespan
 )
 
+import time
+import uuid
+from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi import Request
+
+class RequestLoggingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        trace_id = request.headers.get("x-request-id") or request.headers.get("trace-id") or str(uuid.uuid4())
+        start_time = time.time()
+        
+        response = await call_next(request)
+        
+        process_time_ms = int((time.time() - start_time) * 1000)
+        
+        # User ID is often passed from the backend in auth headers or payload.
+        # We will attempt to log it if it's in a standard header.
+        user_id = request.headers.get("x-user-id", "anonymous")
+        
+        logger.info(
+            "Request processed",
+            extra={
+                "method": request.method,
+                "url": str(request.url.path),
+                "traceId": trace_id,
+                "userId": user_id,
+                "statusCode": response.status_code,
+                "responseTimeMs": process_time_ms,
+                "ip": request.client.host if request.client else "unknown"
+            }
+        )
+        
+        response.headers["X-Request-ID"] = trace_id
+        return response
+
+app.add_middleware(RequestLoggingMiddleware)
+
 app.include_router(orchestration_router, prefix="/api/v1")
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy"}
+    return {"status": "ok", "service": "ai-orchestrator"}
+
+@app.get("/live")
+def live_check():
+    return {"status": "alive"}
+
+@app.get("/ready")
+def ready_check():
+    return {"status": "ready"}

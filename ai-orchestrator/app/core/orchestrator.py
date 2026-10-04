@@ -56,23 +56,31 @@ class Orchestrator:
         # The Watcher stages NotificationIntents. We send them here (Decoupled Architecture).
         staged_notifications = [u.data for u in context.get_pending_updates() if u.collection == "notification_intents"]
         if staged_notifications:
-            from app.tools.notification_tool import NotificationTool
+            from app.tools.notification_tool import NotificationTool, InvalidFCMTokenError
             notifier = NotificationTool()
             user_fcm_token = request.context.get("fcm_token") # Assumes frontend provides this in context
             
             for notif in staged_notifications:
                 if user_fcm_token:
-                    notifier.send_notification(
-                        fcm_token=user_fcm_token,
-                        title=notif.get("title", "AI Guardian"),
-                        body=notif.get("body", ""),
-                        data_payload={
-                            "priority": notif.get("priority", "LOW"),
-                            "type": notif.get("type", "PROGRESS"),
-                            "whyAmISeeingThis": notif.get("whyAmISeeingThis", ""),
-                            "suggestedAction": notif.get("suggestedAction", "")
-                        }
-                    )
+                    try:
+                        notifier.send_notification(
+                            fcm_token=user_fcm_token,
+                            title=notif.get("title", "AI Guardian"),
+                            body=notif.get("body", ""),
+                            data_payload={
+                                "priority": notif.get("priority", "LOW"),
+                                "type": notif.get("type", "PROGRESS"),
+                                "whyAmISeeingThis": notif.get("whyAmISeeingThis", ""),
+                                "suggestedAction": notif.get("suggestedAction", "")
+                            }
+                        )
+                    except InvalidFCMTokenError:
+                        logger.warning(f"FCM Token for user {request.user_id} is invalid. Wiping from DB.", extra={"trace_id": trace_id})
+                        await self.shared_memory.db.users.update_one(
+                            {"userId": request.user_id},
+                            {"$unset": {"fcmToken": ""}}
+                        )
+                        break # Stop trying for this run
                 else:
                     logger.warning("FCM Token not provided in request context; skipping push notification dispatch.")
 

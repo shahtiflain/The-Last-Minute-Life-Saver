@@ -2,7 +2,7 @@ import axios from 'axios';
 import { auth } from '../config/firebase';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,10 +10,19 @@ const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const user = auth.currentUser;
+    const user = auth?.currentUser;
     if (user) {
-      const token = await user.getIdToken();
-      config.headers.Authorization = `Bearer ${token}`;
+      try {
+        const token = await user.getIdToken();
+        config.headers.Authorization = `Bearer ${token}`;
+      } catch (err) {
+        console.error('Failed to get Firebase token:', err);
+        const storedToken = localStorage.getItem('google_oauth_token') || 'mock-token';
+        config.headers.Authorization = `Bearer ${storedToken}`;
+      }
+    } else {
+      const storedToken = localStorage.getItem('google_oauth_token') || 'mock-token';
+      config.headers.Authorization = `Bearer ${storedToken}`;
     }
     return config;
   },
@@ -24,11 +33,14 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => {
-    return response.data;
+    return response;
   },
   (error) => {
     if (error.response?.status === 401) {
-      auth.signOut();
+      if (auth) {
+        auth.signOut();
+      }
+      window.dispatchEvent(new CustomEvent('auth:unauthorized'));
     }
     return Promise.reject(error);
   }
