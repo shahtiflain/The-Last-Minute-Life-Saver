@@ -48,6 +48,12 @@ We believe AI shouldn't be a black box. Every single AI decision in this applica
 
 ## Quickstart
 
+## Setup
+
+1. Copy each .env.example to .env.
+2. Fill in their own Firebase, MongoDB, and Gemini credentials.
+3. Start the frontend, backend, and AI orchestrator.
+
 ### 1. Database & AI
 Ensure you have a MongoDB instance running and a Google Gemini API Key. Populate your `.env` files using the `.env.example` templates.
 

@@ -1,0 +1,83 @@
+name: Deploy to Google Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  GAR_LOCATION: us-central1-docker.pkg.dev
+  REPOSITORY: hustlr-repo
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Google Auth
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SA_EMAIL }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Docker Auth
+        run: |-
+          gcloud auth configure-docker ${{ env.GAR_LOCATION }} --quiet
+
+      # --- BACKEND ---
+      - name: Build and Push Backend
+        run: |-
+          docker build -t ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-backend:${{ github.sha }} ./backend
+          docker push ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-backend:${{ github.sha }}
+
+      - name: Deploy Backend to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: hustlr-backend
+          region: ${{ env.REGION }}
+          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-backend:${{ github.sha }}
+          flags: '--allow-unauthenticated'
+          env_vars: |
+            NODE_ENV=production
+
+      # --- AI ORCHESTRATOR ---
+      - name: Build and Push AI Orchestrator
+        run: |-
+          docker build -t ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-ai:${{ github.sha }} ./ai-orchestrator
+          docker push ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-ai:${{ github.sha }}
+
+      - name: Deploy AI Orchestrator to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: hustlr-ai
+          region: ${{ env.REGION }}
+          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-ai:${{ github.sha }}
+          flags: '--allow-unauthenticated'
+          env_vars: |
+            PYTHON_ENV=production
+
+      # --- FRONTEND ---
+      - name: Build and Push Frontend
+        run: |-
+          docker build -t ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-frontend:${{ github.sha }} ./frontend
+          docker push ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-frontend:${{ github.sha }}
+
+      - name: Deploy Frontend to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: hustlr-frontend
+          region: ${{ env.REGION }}
+          image: ${{ env.GAR_LOCATION }}/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/hustlr-frontend:${{ github.sha }}
+          flags: '--allow-unauthenticated'

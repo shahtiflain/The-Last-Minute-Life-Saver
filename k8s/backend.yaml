@@ -1,0 +1,15 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hustlr-backend
+spec:
+  template:
+    spec:
+      containers:
+      - image: backend-image
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        # Secrets should be injected via Google Secret Manager in a real setup

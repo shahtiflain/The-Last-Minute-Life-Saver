@@ -28,3 +28,6 @@ credentials.json
 
 # Logs
 *.log
+
+.env.*
+!.env.example
