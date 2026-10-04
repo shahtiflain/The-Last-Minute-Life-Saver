@@ -16,7 +16,7 @@ const navItems = [
   { name: 'AI Coach', to: '#', icon: Sparkles },
 ];
 
-export function Sidebar({ className }: { className?: string }) {
+export function Sidebar({ className, onNavigate }: { className?: string; onNavigate?: () => void }) {
   return (
     <div className={cn("flex flex-col w-[260px] bg-[#1a1a1a] border-r border-border-color h-full text-[#a1a1aa]", className)}>
       <div className="flex flex-col px-4 py-4 border-b border-border-color gap-4">
@@ -44,6 +44,7 @@ export function Sidebar({ className }: { className?: string }) {
             <NavLink
               key={item.name}
               to={item.to}
+              onClick={onNavigate}
               className={({ isActive }) =>
                 cn(
                   'flex items-center justify-between px-3 py-2 text-[13px] font-medium rounded-lg transition-colors group',
@@ -92,12 +93,12 @@ export function Sidebar({ className }: { className?: string }) {
         <div className="flex items-center justify-between px-3 py-2">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-[#27272a] flex items-center justify-center text-xs font-medium text-white border border-[#3f3f46]">
-              {auth.currentUser?.displayName?.charAt(0) || 'S'}
+              {auth?.currentUser?.displayName?.charAt(0) || 'S'}
               <div className="absolute w-2.5 h-2.5 bg-[#10b981] rounded-full border-2 border-[#1a1a1a] translate-x-3 translate-y-3"></div>
             </div>
             <div className="flex flex-col">
               <span className="text-[13px] font-medium text-white leading-tight">
-                {auth.currentUser?.displayName || 'Shah R.'}
+                {auth?.currentUser?.displayName || 'Shah R.'}
               </span>
               <span className="text-[10px] text-[#71717a] flex items-center gap-1">
                 <div className="w-1.5 h-1.5 rounded-full bg-[#10b981]"></div>

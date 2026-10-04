@@ -12,7 +12,7 @@ function seededRandom(seed: number) {
   return x - Math.floor(x);
 }
 
-export function HabitCompletionWidget() {
+export function HabitProgressWidget() {
   const { data: analytics, isLoading } = useAnalytics();
   const { data: habits } = useHabits();
   const habitCompletion = analytics?.habitCompletion;

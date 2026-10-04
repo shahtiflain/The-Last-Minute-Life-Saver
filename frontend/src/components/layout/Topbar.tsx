@@ -7,7 +7,7 @@ export function Topbar({ onMenuClick }: { onMenuClick: () => void }) {
   const { isDark, toggleTheme } = useThemeStore();
 
   const handleLogout = () => {
-    auth.signOut();
+    auth?.signOut();
   };
 
   return (
